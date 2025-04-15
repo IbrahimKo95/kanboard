@@ -49,4 +49,26 @@ class TaskController extends Controller
 
         return back()->with('success', 'Task updated successfully.');
     }
+
+    public function assignUser(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $task->assignedUsers()->attach($validated['user_id']);
+
+        return back()->with('success', 'User assigned to task successfully.');
+    }
+
+    public function unassignUser(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $task->assignedUsers()->detach($validated['user_id']);
+
+        return back()->with('success', 'User unassigned from task successfully.');
+    }
 }

@@ -18,6 +18,13 @@ class Project extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'user_project')
+            ->withPivot('role');
+    }
+
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }

@@ -10,8 +10,13 @@ Route::get('/', function () {
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
-Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store')->middleware('auth');
-Route::delete('/tasks/{task}', [TaskController::class, 'delete'])->name('tasks.delete')->middleware('auth');
-Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update')->middleware('auth');
-Route::put('/tasks/{task}/assign', [TaskController::class, 'assignUser'])->name('tasks.assign')->middleware('auth');
-Route::put('/tasks/{task}/unassign', [TaskController::class, 'unassignUser'])->name('tasks.unassign')->middleware('auth');
+Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{task}', [TaskController::class, 'delete'])->name('tasks.delete');
+    
+    Route::put('/tasks/{task}/assign', [TaskController::class, 'assignUser'])->name('tasks.assign');
+    Route::put('/tasks/{task}/unassign', [TaskController::class, 'unassignUser'])->name('tasks.unassign');
+});

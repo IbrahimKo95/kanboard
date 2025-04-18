@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -70,5 +72,13 @@ class TaskController extends Controller
         $task->assignedUsers()->detach($validated['user_id']);
 
         return back()->with('success', 'User unassigned from task successfully.');
+    }
+
+    public function list(Project $project)
+    {
+        $tasks = $project->tasks;
+        $users = $project->users;
+        return view('tasks.list', compact('tasks', 'project', 'users'));
+
     }
 }

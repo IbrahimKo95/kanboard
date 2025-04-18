@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('description');
             $table->timestamp('due_date');
             $table->timestamp('completed_at');
-            $table->bigInteger('project_id')->index();
+            $table->unsignedBigInteger('project_id')->index();
+            $table->foreign('project_id')->references('id')->on('projects');
             $table->unsignedBigInteger('priority_id')->index();
             $table->foreign('priority_id')->references('id')->on('priority');
             $table->unsignedBigInteger('column_id');

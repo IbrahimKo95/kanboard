@@ -20,3 +20,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/tasks/{task}/assign', [TaskController::class, 'assignUser'])->name('tasks.assign');
     Route::put('/tasks/{task}/unassign', [TaskController::class, 'unassignUser'])->name('tasks.unassign');
 });
+
+use App\Http\Controllers\Auth\RegisterController;
+
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
+use App\Http\Controllers\Auth\LoginController;
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

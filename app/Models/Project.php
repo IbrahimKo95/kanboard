@@ -14,6 +14,13 @@ class Project extends Model
     protected $fillable = [
         'name',
         'description',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
 
     public function users()

@@ -9,6 +9,8 @@ Route::get('/', function () {
 });
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+Route::post('/projects/store', [ProjectController::class, 'store'])->name('projects.store');
+Route::get('/projects/create', [ProjectController::class, 'creationForm'])->name('projects.create');
 
 Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
 

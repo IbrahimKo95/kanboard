@@ -21,4 +21,5 @@
     @endforeach
 </ul>
 @endif
+<a href="{{ route('projects.create') }}">Créer un projet</a>
 @endsection

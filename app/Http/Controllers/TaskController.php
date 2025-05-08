@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Column;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -11,17 +12,17 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
 
-    public function store(Request $request, Project $project)
+    public function store(Request $request, Project $project, Column $column)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'completed_at' => 'nullable|date',
-            'priority_id' => 'nullable|exists:priority,id',
-            'column_id' => 'nullable|exists:columns,id',
+            'priority_id' => 'nullable|exists:priority,id'
         ]);
         $validated['project_id'] = $project->id;
+        $validated['column_id'] = $column->id;
         $validated['user_id'] = auth()->id();
 
         $task = Task::create($validated);

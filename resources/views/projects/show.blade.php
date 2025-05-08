@@ -1,12 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold mb-4">{{ $project->name }}</h1>
-    <p class="mb-4 text-gray-700">{{ $project->description }}</p>
-    
-    <a href="{{ route('tasks.list', $project) }}" class="text-blue-500 hover:underline">Liste des tâches</a>
+    @php
+        session_start();
+        $view = 'projects.view.kanban'; // Valeur par défaut
 
-    <a href="{{ route('projects.index') }}" class="text-blue-500 hover:underline">Retour à la liste</a>
-</div>
+        if (isset($_SESSION[$project->id]['view'])) {
+            switch ($_SESSION[$project->id]['view']) {
+                case 'list':
+                    $view = 'projects.view.list';
+                    break;
+                case 'kanban':
+                    $view = 'projects.view.kanban';
+                    break;
+                case 'calendar':
+                    $view = 'projects.view.calendar';
+                    break;
+            }
+        }
+    @endphp
+
+    @include($view)
 @endsection

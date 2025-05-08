@@ -5,6 +5,12 @@
 @section('content')
 <h1>Liste des projets</h1>
 
+@if(session('success'))
+    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+        {{ session('success') }}
+    </div>
+@endif
+
 @if($projects->isEmpty())
 <p>Aucun projet trouvé.</p>
 @else
@@ -21,4 +27,5 @@
     @endforeach
 </ul>
 @endif
+<a href="{{ route('projects.create') }}">Créer un projet</a>
 @endsection

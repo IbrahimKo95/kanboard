@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-100 text-gray-900 h-screen overflow-hidden">
 
 <nav class="fixed top-0 left-0 right-0 z-10 bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200 h-20">
     <div class="flex items-center gap-4">
@@ -29,7 +29,7 @@
     </div>
 </nav>
 
-<div class="flex pt-20">
+<div class="flex h-[calc(100vh-5rem)]">
     <aside class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-20 p-6 border-r border-gray-200">
         <nav class="flex flex-col gap-4">
             <div>
@@ -61,8 +61,7 @@
             </a>
         </nav>
     </aside>
-
-    <main class="ml-70  w-full mt-5">
+    <main class="ml-64 w-full overflow-y-auto p-6 mt-20">
         @yield('content')
     </main>
 </div>

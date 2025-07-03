@@ -3,7 +3,7 @@
 @section('content')
     @php
         session_start();
-        $view = 'projects.view.kanban'; // Valeur par défaut
+        $view = 'projects.view.kanban';
 
         if (isset($_SESSION[$project->id]['view'])) {
             switch ($_SESSION[$project->id]['view']) {

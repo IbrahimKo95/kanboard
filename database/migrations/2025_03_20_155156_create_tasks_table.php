@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestamp('due_date')->nullable();
             $table->timestamp('completed_at')->nullable();
+            $table->float('order')->default(1000);
             $table->unsignedBigInteger('project_id')->index();
             $table->foreign('project_id')->references('id')->on('projects');
             $table->unsignedBigInteger('priority_id')->index()->nullable();

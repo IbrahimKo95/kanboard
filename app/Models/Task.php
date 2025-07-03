@@ -14,6 +14,7 @@ class Task extends Model
         'description',
         'due_date',
         'completed_at',
+        'order',
         'project_id',
         'priority_id',
         'column_id',
@@ -43,5 +44,10 @@ class Task extends Model
     public function column()
     {
         return $this->belongsTo(Column::class);
+    }
+
+    public function priority()
+    {
+        return $this->belongsTo(Priority::class);
     }
 }

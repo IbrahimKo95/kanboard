@@ -19,7 +19,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'completed_at' => 'nullable|date',
-            'priority_id' => 'nullable|exists:priority,id'
+            'priority_id' => 'nullable|exists:priorities,id'
         ]);
         $validated['project_id'] = $project->id;
         $validated['column_id'] = $column->id;
@@ -44,8 +44,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
             'completed_at' => 'nullable|date',
-            'priority_id' => 'nullable|exists:priority,id',
-            'column_id' => 'nullable|exists:columns,id',
+            'priority_id' => 'nullable|exists:priorities,id',
         ]);
 
         $task->update($validated);
@@ -80,6 +79,65 @@ class TaskController extends Controller
         $tasks = $project->tasks;
         $users = $project->users;
         return view('tasks.list', compact('tasks', 'project', 'users'));
-
     }
+
+    public function move(Request $request)
+    {
+        $request->validate([
+            'task_id' => 'required|exists:tasks,id',
+            'column_id' => 'required|exists:columns,id',
+            'prev_id' => 'nullable|exists:tasks,id',
+            'next_id' => 'nullable|exists:tasks,id',
+        ]);
+
+        $task = Task::findOrFail($request->task_id);
+        $task->column_id = $request->column_id;
+
+        $prev = $request->prev_id ? Task::find($request->prev_id) : null;
+        $next = $request->next_id ? Task::find($request->next_id) : null;
+
+        if ($prev && $next) {
+            $task->order = ($prev->order + $next->order) / 2;
+        } elseif ($prev) {
+            $task->order = $prev->order + 100;
+        } elseif ($next) {
+            $task->order = $next->order / 2;
+        } else {
+            $task->order = 1000;
+        }
+
+        $task->save();
+
+        $tasks = Task::where('column_id', $request->column_id)->orderBy('order')->get();
+        for ($i = 1; $i < count($tasks); $i++) {
+            if (abs($tasks[$i]->order - $tasks[$i - 1]->order) < 0.0001) {
+                foreach ($tasks as $index => $t) {
+                    $t->order = ($index + 1) * 100;
+                    $t->save();
+                }
+                break;
+            }
+        }
+        return response()->json(['success' => true]);
+    }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'column_id' => 'required|exists:columns,id',
+            'tasks' => 'required|array',
+            'tasks.*.id' => 'required|exists:tasks,id',
+            'tasks.*.order' => 'required|numeric'
+        ]);
+
+        foreach ($request->tasks as $taskData) {
+            Task::where('id', $taskData['id'])->update([
+                'order' => $taskData['order'],
+                'column_id' => $request->column_id
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
 }

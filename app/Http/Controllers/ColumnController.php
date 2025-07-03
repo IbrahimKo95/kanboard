@@ -14,9 +14,13 @@ class ColumnController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'color' => 'nullable|string|max:7',
         ]);
-        $validated['color'] = "#000000";
-        $validated['finished_column'] = false;
+        if(isset($request->finished_column)) {
+            $validated['finished_column'] = true;
+        } else {
+            $validated['finished_column'] = false;
+        }
         $validated['project_id'] = $project->id;
 
         Column::create($validated);

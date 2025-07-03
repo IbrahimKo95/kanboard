@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ColumnController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
@@ -36,3 +37,7 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::post('/projects/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
+Route::post('/tasks/move', [TaskController::class, 'move'])->name('tasks.move');
+Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
+
+

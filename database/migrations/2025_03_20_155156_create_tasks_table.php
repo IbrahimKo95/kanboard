@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description');
-            $table->timestamp('due_date');
-            $table->timestamp('completed_at');
-            $table->bigInteger('project_id')->index();
-            $table->unsignedBigInteger('priority_id')->index();
+            $table->string('description')->nullable();
+            $table->timestamp('due_date')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->float('order')->default(1000);
+            $table->unsignedBigInteger('project_id')->index();
+            $table->foreign('project_id')->references('id')->on('projects');
+            $table->unsignedBigInteger('priority_id')->index()->nullable();
             $table->foreign('priority_id')->references('id')->on('priority');
             $table->unsignedBigInteger('column_id');
             $table->foreign('column_id')->references('id')->on('columns');

@@ -18,7 +18,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'lastname',
+        'firstname',
         'email',
         'password',
     ];
@@ -44,5 +45,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'user_project')
+            ->withPivot('role');
     }
 }

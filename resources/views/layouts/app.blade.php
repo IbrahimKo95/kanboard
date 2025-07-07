@@ -12,7 +12,7 @@
 <nav class="fixed top-0 left-0 right-0 z-10 bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200 h-20">
     <div class="flex items-center gap-4">
         <span class="text-xl font-bold text-blue-600">📈 Kanboard</span>
-        <div class="text-sm text-gray-500">Projet : <span class="font-medium text-gray-700">{{ $project->name }}</span></div>
+        <div class="text-sm text-gray-500">Projet : <span class="font-medium text-gray-700">{{ $project->name ?? '—' }}</span></div>
     </div>
     <div class="flex items-center gap-4">
         <a class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">

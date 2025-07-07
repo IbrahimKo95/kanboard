@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id')->index();
             $table->foreign('project_id')->references('id')->on('projects');
             $table->unsignedBigInteger('priority_id')->index()->nullable();
-            $table->foreign('priority_id')->references('id')->on('priority');
+            $table->foreign('priority_id')->references('id')->on('priorities');
             $table->unsignedBigInteger('column_id');
             $table->foreign('column_id')->references('id')->on('columns');
             $table->unsignedBigInteger('user_id')->index();

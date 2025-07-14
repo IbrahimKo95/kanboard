@@ -18,9 +18,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/projects/{project}/{column}/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'delete'])->name('tasks.delete');
-
-    Route::patch('/tasks/{task}/assign', [TaskController::class, 'assignUser'])->name('tasks.assign');
-    Route::patch('/tasks/{task}/unassign', [TaskController::class, 'unassignUser'])->name('tasks.unassign');
 });
 
 use App\Http\Controllers\Auth\RegisterController;

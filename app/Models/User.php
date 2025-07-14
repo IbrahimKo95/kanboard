@@ -78,4 +78,9 @@ class User extends Authenticatable
         ];
     }
 
+    public function fullName()
+    {
+        return trim("{$this->firstname} {$this->lastname}");
+    }
+
 }

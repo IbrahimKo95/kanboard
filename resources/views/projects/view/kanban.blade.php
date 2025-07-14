@@ -52,9 +52,11 @@
 
                                 </div>
                                 <div class="flex -space-x-2">
-                                    <div class="w-8 h-8 rounded-full border-2 border-white text-white text-xs flex items-center justify-center font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}">
-                                        {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
-                                    </div>
+                                    @foreach($task->assignedUsers as $user)
+                                        <div class="w-8 h-8 rounded-full border-2 border-white text-white text-xs flex items-center justify-center font-bold {{ $user->avatar()['color'] }}">
+                                            {{ $user->avatar()['initials'] }}
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -90,6 +92,24 @@
                                                 <option selected="{{$task->priority_id == $priority->id}}" value="{{ $priority->id }}">{{ $priority->name }}</option>
                                             @endforeach
                                         </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label>Assigner à</label>
+                                        <div class="flex flex-col gap-2 h-32 overflow-y-scroll mt-2">
+                                            @foreach($project->users as $user)
+                                                <div class="flex items-center gap-2 bg-gray-100 px-4 py-3 rounded-md">
+                                                    <input type="checkbox" name="assigned_users[]" value="{{ $user->id }}" id="user_{{ $user->id }}" {{ $task->assignedUsers->contains($user) ? 'checked' : '' }}>
+                                                    <div class="w-8 h-8 rounded-full border-2 border-white text-white text-xs flex items-center justify-center font-bold {{ $user->avatar()['color'] }}">
+                                                        {{ $user->avatar()['initials'] }}
+                                                    </div>
+                                                    <div>
+                                                        <label for="user_{{ $user->id }}" class="text-sm text-gray-700">{{ $user->fullName() }}</label>
+                                                        <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
 
                                     <div class="text-right">

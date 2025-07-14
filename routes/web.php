@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalendarExportController;
 use App\Http\Controllers\ColumnController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -34,5 +35,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::post('/projects/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
 Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
+
+Route::get('/calendar/{project}.ics', [CalendarExportController::class, 'export'])->name('calendar.export');
 
 

@@ -15,6 +15,9 @@
         <div class="text-sm text-gray-500">Projet : <span class="font-medium text-gray-700">{{ $project->name }}</span></div>
     </div>
     <div class="flex items-center gap-4">
+        <a href="{{ route('calendar.export', ['project' => $project->id]) }}" target="_blank" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+            Exporter vers calendrier
+        </a>
         <a class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
             Inviter des utilisateurs
         </a>

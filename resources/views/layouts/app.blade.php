@@ -25,7 +25,9 @@
             </svg>
         </a>
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
-        <img src="https://i.pravatar.cc/40?img=3" class="w-8 h-8 rounded-full" alt="Avatar utilisateur">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}" alt="Avatar utilisateur">
+            {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
+        </div>
     </div>
 </nav>
 

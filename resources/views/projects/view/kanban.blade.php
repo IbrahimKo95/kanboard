@@ -52,8 +52,9 @@
 
                                 </div>
                                 <div class="flex -space-x-2">
-                                    <img class="w-6 h-6 rounded-full border-2 border-white" src="https://i.pravatar.cc/40?img=1" alt="">
-                                    <img class="w-6 h-6 rounded-full border-2 border-white" src="https://i.pravatar.cc/40?img=2" alt="">
+                                    <div class="w-8 h-8 rounded-full border-2 border-white text-white text-xs flex items-center justify-center font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}">
+                                        {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
+                                    </div>
                                 </div>
                             </div>
                         </div>

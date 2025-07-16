@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-100 text-gray-900 h-screen overflow-hidden">
 
 <nav class="fixed top-0 left-0 right-0 z-10 bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200 h-20">
     <div class="flex items-center gap-4">
@@ -25,11 +25,13 @@
             </svg>
         </a>
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
-        <img src="https://i.pravatar.cc/40?img=3" class="w-8 h-8 rounded-full" alt="Avatar utilisateur">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}" alt="Avatar utilisateur">
+            {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
+        </div>
     </div>
 </nav>
 
-<div class="flex pt-20">
+<div class="flex h-[calc(100vh-5rem)]">
     <aside class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-20 p-6 border-r border-gray-200">
         <nav class="flex flex-col gap-4">
             <div>
@@ -37,7 +39,7 @@
                 <ul class="space-y-2">
                     @foreach (\Illuminate\Support\Facades\Auth::user()->projects as $proj)
                         <li>
-                            <a href="#" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
+                            <a href="{{route('projects.show', [$proj])}}" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
                                 </svg>
@@ -61,8 +63,7 @@
             </a>
         </nav>
     </aside>
-
-    <main class="ml-70  w-full mt-5">
+    <main class="ml-64 w-full overflow-y-auto p-6 mt-20">
         @yield('content')
     </main>
 </div>

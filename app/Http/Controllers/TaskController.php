@@ -57,9 +57,8 @@ class TaskController extends Controller
 
     public function list(Project $project)
     {
-        $tasks = $project->tasks;
-        $users = $project->users;
-        return view('tasks.list', compact('tasks', 'project', 'users'));
+        session(['project_' . $project->id . '_view' => 'list']);
+        return view('projects.show', compact('project'));
     }
 
     public function reorder(Request $request)
@@ -81,4 +80,11 @@ class TaskController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function calendar(Project $project)
+    {
+        session(['project_' . $project->id . '_view' => 'calendar']);
+        return view('projects.show', compact('project'));
+    }
+
 }
+

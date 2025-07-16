@@ -35,4 +35,5 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/projects/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
 Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
 
+Route::get('/projects/{project}/calendar', [TaskController::class, 'calendar'])->name('projects.calendar');
 

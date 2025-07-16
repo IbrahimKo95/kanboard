@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
+// Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
 
 Route::middleware('auth')->group(function () {
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');

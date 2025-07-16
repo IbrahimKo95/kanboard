@@ -3,7 +3,7 @@
 @section('content')
     @php
         session_start();
-        $view = 'projects.view.kanban';
+        $view = 'projects.view.list';
 
         if (isset($_SESSION[$project->id]['view'])) {
             switch ($_SESSION[$project->id]['view']) {

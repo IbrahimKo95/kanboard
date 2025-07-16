@@ -46,8 +46,8 @@ class TaskController extends Controller
             'completed_at' => 'nullable|date',
             'priority_id' => 'nullable|exists:priorities,id',
         ]);
-
-        $ids = array_filter($request['assigned_users'], 'is_numeric');
+        $assignedUsers = $request->input('assigned_users', []);
+        $ids = array_filter($assignedUsers, 'is_numeric');
         $task->assignedUsers()->sync($ids);
 
         $task->update($validated);

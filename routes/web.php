@@ -9,6 +9,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 // Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
+use App\Http\Controllers\InvitationController;
+use App\Mail\ProjectInvitationMail;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Invitation;
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
@@ -16,9 +21,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/create', [ProjectController::class, 'creationForm'])->name('projects.create');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
     Route::post('/projects/{project}/{column}/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::post('/projects/{project}/tasks', [TaskController::class, 'storeFromList'])->name('tasks.storeFromList');
+    Route::post('/projects/{project}/invitations', [InvitationController::class, 'send'])->name('invitations.send');
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'delete'])->name('tasks.delete');
 });
+
+
+Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->name('invitations.accept');
 
 use App\Http\Controllers\Auth\RegisterController;
 

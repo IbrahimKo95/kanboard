@@ -23,6 +23,49 @@ class ProjectController extends Controller
         return view('projects.create');
     }
 
+    public function invite(Request $request, Project $project)
+{
+    if (auth()->user()->role_id <= 3) {
+        abort(403);
+    }
+
+    $request->validate(['email' => 'required|email']);
+
+    $token = Str::uuid();
+
+    Invitation::create([
+        'sender_id' => auth()->id(),
+        'email' => $request->email,
+        'project_id' => $project->id,
+        'status' => 0,
+        'token' => $token,
+    ]);
+
+    Mail::to($request->email)->send(new ProjectInvitationMail($project, $token));
+
+    return back()->with('success', 'Invitation envoyée à ' . $request->email);
+}
+
+public function acceptInvitation($token)
+{
+    $invitation = Invitation::where('token', $token)->firstOrFail();
+
+    if ($invitation->status != 0) {
+        return redirect()->route('projects.index')->with('info', 'Invitation déjà traitée.');
+    }
+
+    $user = auth()->user();
+    $invitation->update([
+        'receiver_id' => $user->id,
+        'status' => 1,
+    ]);
+
+    $invitation->project->users()->attach($user->id);
+
+    return redirect()->route('projects.show', $invitation->project)->with('success', 'Vous avez rejoint le projet !');
+}
+
+
     public function store(Request $request)
     {
         $validated = $request->validate([

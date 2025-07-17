@@ -30,6 +30,26 @@ class TaskController extends Controller
         return back()->with('success', 'Task created successfully.');
     }
 
+    public function storeFromList(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'nullable|date',
+            'completed_at' => 'nullable|date',
+            'priority_id' => 'nullable|exists:priorities,id',
+            'column_id' => 'required|exists:columns,id'
+        ]);
+
+        $validated['project_id'] = $project->id;
+        $validated['user_id'] = auth()->id();
+
+        $task = Task::create($validated);
+
+        return back()->with('success', 'Tâche créée avec succès.');
+    }
+
+
     public function delete(Task $task)
     {
         $task->delete();
@@ -45,6 +65,7 @@ class TaskController extends Controller
             'due_date' => 'nullable|date',
             'completed_at' => 'nullable|date',
             'priority_id' => 'nullable|exists:priorities,id',
+            'column_id' => 'required|exists:columns,id'
         ]);
         $assignedUsers = $request->input('assigned_users', []);
         $ids = array_filter($assignedUsers, 'is_numeric');
@@ -55,12 +76,20 @@ class TaskController extends Controller
         return back()->with('success', 'Task updated successfully.');
     }
 
+    // public function list(Project $project)
+    // {
+    //     $tasks = $project->tasks;
+    //     $users = $project->users;
+    //     return view('tasks.list', compact('tasks', 'project', 'users'));
+    // }
     public function list(Project $project)
     {
         $tasks = $project->tasks;
         $users = $project->users;
-        return view('tasks.list', compact('tasks', 'project', 'users'));
+        $columns = $project->columns;
+        return view('tasks.list', compact('tasks', 'project', 'users', 'columns'));
     }
+
 
     public function reorder(Request $request)
     {

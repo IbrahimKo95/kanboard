@@ -22,7 +22,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // prévention CSRF/session fixation
-            return redirect()->intended('/dashboard'); // ou autre page
+            return redirect()->intended(route('projects.index'));
         }
 
         return back()->withErrors([

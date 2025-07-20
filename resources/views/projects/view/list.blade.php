@@ -120,4 +120,70 @@
             </div>
         @endforeach
     </div>
+
+    <!-- Modal de création de tâche -->
+    <div id="modalCreateTask" tabindex="-1" class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
+        <div class="relative w-full max-w-lg bg-white rounded-lg shadow p-6">
+            <button data-modal-hide="modalCreateTask" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900">
+                ✕
+            </button>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Créer une nouvelle tâche</h3>
+            @if($project->columns->count() > 0)
+                <form method="POST" action="{{ route('tasks.store', ['project' => $project->id, 'column' => $project->columns->first()->id]) }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="title" class="block mb-1 font-medium text-gray-900">Titre</label>
+                        <input type="text" name="title" id="title" class="w-full border rounded px-3 py-2" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="block mb-1 font-medium text-gray-900">Description</label>
+                        <textarea name="description" id="description" class="w-full border rounded px-3 py-2"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="due_date" class="block mb-1 font-medium text-gray-900">Date d'échéance</label>
+                        <input id="due_date" class="w-full border rounded px-3 py-2" type="date" name="due_date">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="priority" class="block mb-1 font-medium text-gray-900">Priorité</label>
+                        <select name="priority_id" id="priority" class="w-full border rounded px-3 py-2">
+                            <option value="">-- Choisir --</option>
+                            @foreach(\App\Models\Priority::all() as $priority)
+                                <option value="{{ $priority->id }}">{{ $priority->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label>Assigner à</label>
+                        <div class="flex flex-col gap-2 h-32 overflow-y-scroll mt-2">
+                            @foreach($project->users as $user)
+                                <div class="flex items-center gap-2 bg-gray-100 px-4 py-3 rounded-md">
+                                    <input type="checkbox" name="assigned_users[]" value="{{ $user->id }}" id="user_{{ $user->id }}">
+                                    <div class="w-8 h-8 rounded-full border-2 border-white text-white text-xs flex items-center justify-center font-bold {{ $user->avatar()['color'] }}">
+                                        {{ $user->avatar()['initials'] }}
+                                    </div>
+                                    <div>
+                                        <label for="user_{{ $user->id }}" class="text-sm text-gray-700">{{ $user->fullName() }}</label>
+                                        <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Créer</button>
+                    </div>
+                </form>
+            @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500 mb-4">Aucune colonne trouvée dans ce projet.</p>
+                    <p class="text-sm text-gray-400">Veuillez d'abord créer au moins une colonne pour pouvoir ajouter des tâches.</p>
+                </div>
+            @endif
+        </div>
+    </div>
 </div> 

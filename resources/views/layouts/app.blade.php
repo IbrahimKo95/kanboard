@@ -97,6 +97,40 @@ if (sidebarOverlay) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+<!-- Modal de création de colonne -->
+<div id="modalCreateColumn" tabindex="-1" class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
+    <div class="relative w-full max-w-lg bg-white rounded-lg shadow p-6">
+        <button data-modal-hide="modalCreateColumn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900">
+            ✕
+        </button>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Créer une nouvelle colonne</h3>
+        <form method="POST" action="{{ route('columns.store', ['project' => $project ?? 1]) }}">
+            @csrf
+            <div class="mb-4">
+                <label for="column_name" class="block mb-1 font-medium text-gray-900">Nom de la colonne</label>
+                <input type="text" name="name" id="column_name" class="w-full border rounded px-3 py-2" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="column_color" class="block mb-1 font-medium text-gray-900">Couleur</label>
+                <input type="color" name="color" id="column_color" class="w-full border rounded px-3 py-2" value="#3B82F6">
+            </div>
+
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" name="finished_column" class="mr-2">
+                    <span class="text-sm text-gray-700">Colonne de fin (tâches terminées)</span>
+                </label>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Créer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 
 

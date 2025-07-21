@@ -1,9 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Mail\ProjectInvitationMail;
+use App\Models\Invitation;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ProjectController extends Controller
 {
@@ -64,6 +67,12 @@ public function acceptInvitation($token)
 
     return redirect()->route('projects.show', $invitation->project)->with('success', 'Vous avez rejoint le projet !');
 }
+
+    public function showUsers(Project $project)
+    {
+        $users = $project->users;
+        return view('projects.users', compact('project', 'users'));
+    }
 
 
     public function store(Request $request)

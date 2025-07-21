@@ -40,6 +40,22 @@ class ProjectController extends Controller
 
         $project->users()->attach(auth()->id(), ['role' => 3]);
 
+        $project->columns()->create([
+            'name' => 'À faire',
+            'color' => '#006aff',
+            'finished_column' => false
+        ]);
+        $project->columns()->create([
+            'name' => 'En cours',
+            'color' => '#ff6600',
+            'finished_column' => false
+        ]);
+        $project->columns()->create([
+            'name' => 'Terminé',
+            'color' => '#ff2a00',
+            'finished_column' => true
+        ]);
+
         return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
     }
 

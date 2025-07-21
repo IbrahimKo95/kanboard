@@ -40,20 +40,20 @@
 <!-- Sidebar responsive : hidden on mobile, overlay on mobile when open -->
 <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden"></div>
 <aside id="sidebar" class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-40 p-6 border-r border-gray-200 hidden md:block transition-transform duration-200">
-    <nav class="flex flex-col gap-4">
-        <div>
-            <h2 class="text-lg font-semibold text-gray-800 mb-2">Projets</h2>
-            <ul class="space-y-2">
-                @foreach (\Illuminate\Support\Facades\Auth::user()->projects as $proj)
-                    <li>
-                        <a href="{{route('projects.show', [$proj])}}" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
-                            </svg>
-                            {{ $proj->name }}
-                        </a>
-                    </li>
-                @endforeach
+        <nav class="flex flex-col gap-4">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-800 mb-2">Projets</h2>
+                <ul class="space-y-2">
+                    @foreach (\Illuminate\Support\Facades\Auth::user()->projects as $proj)
+                        <li>
+                            <a href="{{route('projects.show', [$proj])}}" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
+                                </svg>
+                                {{ $proj->name }}
+                            </a>
+                        </li>
+                    @endforeach
             </div>
             <hr class="border-gray-200 my-4">
             <a href="#" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">

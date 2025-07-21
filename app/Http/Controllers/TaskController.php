@@ -50,7 +50,7 @@ class TaskController extends Controller
         // Gérer les utilisateurs assignés de manière sécurisée
         if ($request->has('assigned_users') && is_array($request->assigned_users)) {
             $ids = array_filter($request->assigned_users, 'is_numeric');
-            $task->assignedUsers()->sync($ids);
+        $task->assignedUsers()->sync($ids);
         } else {
             // Si aucun utilisateur n'est assigné, vider la relation
             $task->assignedUsers()->sync([]);

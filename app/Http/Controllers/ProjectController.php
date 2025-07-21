@@ -38,6 +38,8 @@ class ProjectController extends Controller
 
         $project = Project::create($validated);
 
+        $project->users()->attach(auth()->id(), ['role' => 3]);
+
         return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
     }
 

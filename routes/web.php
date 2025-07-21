@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/projects/{project}/list', [TaskController::class, 'list'])->name('tasks.list');
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
     Route::post('/projects/store', [ProjectController::class, 'store'])->name('projects.store');
     Route::get('/projects/create', [ProjectController::class, 'creationForm'])->name('projects.create');
@@ -20,6 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/projects/{project}/{column}/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'delete'])->name('tasks.delete');
+    Route::post('/projects/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
+    Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
+    Route::get('/projects/{project}/calendar', [TaskController::class, 'calendar'])->name('projects.calendar');
+    Route::get('/calendar/{project}.ics', [CalendarExportController::class, 'export'])->name('calendar.export');
 });
 
 use App\Http\Controllers\Auth\RegisterController;
@@ -33,11 +37,5 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::post('/projects/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
-Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
-
-Route::get('/projects/{project}/calendar', [TaskController::class, 'calendar'])->name('projects.calendar');
-Route::get('/calendar/{project}.ics', [CalendarExportController::class, 'export'])->name('calendar.export');
 
 

@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Route; @endphp
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -17,22 +18,24 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-        <span class="text-xl font-bold text-blue-600">📈 Kanboard</span>
+        <a href="{{route('projects.index')}}" class="text-xl font-bold text-blue-600">📈 Kanboard</a>
         <div class="text-sm text-gray-500 hidden sm:block">Projet : <span class="font-medium text-gray-700">{{ $project->name ?? '—' }}</span></div>
     </div>
     <div class="flex items-center gap-4">
-        <a href="{{ route('calendar.export', ['project' => $project->id]) }}" target="_blank" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
-            Exporter vers calendrier
-        </a>
-        <a class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
-            Inviter des utilisateurs
-        </a>
-        <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center hidden sm:flex">
-            Nouvelle colonne
-            <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-        </a>
+        @if(Route::currentRouteName() != "projects.index" && Route::currentRouteName() != "projects.create")
+            <a href="{{ route('calendar.export', ['project' => $project->id]) }}" target="_blank" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Exporter vers calendrier
+            </a>
+            <a class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Inviter des utilisateurs
+            </a>
+            <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center hidden sm:flex">
+                Nouvelle colonne
+                <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </a>
+        @endif
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
         <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}" alt="Avatar utilisateur">
             {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}

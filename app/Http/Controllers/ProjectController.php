@@ -15,6 +15,10 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        // Définir la vue par défaut si aucune session n'est définie
+        if (!session()->has('project_' . $project->id . '_view')) {
+            session(['project_' . $project->id . '_view' => 'kanban']);
+        }
         return view('projects.show', compact('project'));
     }
 
@@ -35,5 +39,11 @@ class ProjectController extends Controller
         $project = Project::create($validated);
 
         return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
+    }
+
+    public function kanban(Project $project)
+    {
+        session(['project_' . $project->id . '_view' => 'kanban']);
+        return view('projects.show', compact('project'));
     }
 }

@@ -13,11 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Créer les priorités de base
+        \App\Models\Priority::create(['name' => 'Urgente']);
+        \App\Models\Priority::create(['name' => 'Importante']);
+        \App\Models\Priority::create(['name' => 'Moyenne']);
+        \App\Models\Priority::create(['name' => 'Faible']);
     }
 }

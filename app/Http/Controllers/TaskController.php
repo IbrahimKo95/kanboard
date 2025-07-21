@@ -47,8 +47,14 @@ class TaskController extends Controller
             'priority_id' => 'nullable|exists:priorities,id',
         ]);
 
-        $ids = array_filter($request['assigned_users'], 'is_numeric');
-        $task->assignedUsers()->sync($ids);
+        // Gérer les utilisateurs assignés de manière sécurisée
+        if ($request->has('assigned_users') && is_array($request->assigned_users)) {
+            $ids = array_filter($request->assigned_users, 'is_numeric');
+            $task->assignedUsers()->sync($ids);
+        } else {
+            // Si aucun utilisateur n'est assigné, vider la relation
+            $task->assignedUsers()->sync([]);
+        }
 
         $task->update($validated);
 
@@ -57,9 +63,8 @@ class TaskController extends Controller
 
     public function list(Project $project)
     {
-        $tasks = $project->tasks;
-        $users = $project->users;
-        return view('tasks.list', compact('tasks', 'project', 'users'));
+        session(['project_' . $project->id . '_view' => 'list']);
+        return view('projects.show', compact('project'));
     }
 
     public function reorder(Request $request)
@@ -81,4 +86,11 @@ class TaskController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function calendar(Project $project)
+    {
+        session(['project_' . $project->id . '_view' => 'calendar']);
+        return view('projects.show', compact('project'));
+    }
+
 }
+

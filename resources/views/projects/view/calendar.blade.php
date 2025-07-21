@@ -1,7 +1,21 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-800">Calendrier – {{ \Carbon\Carbon::now()->format('F Y') }}</h2>
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
+            <button id="calendarPrevBtn" class="hidden sm:flex items-center justify-center w-9 h-9 bg-white border border-gray-300 shadow-sm text-gray-600 rounded-full hover:bg-blue-100 hover:text-blue-600 transition" onclick="calendarPrev()" type="button" aria-label="Jour précédent">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="relative">
+                <select id="calendarViewMode" class="appearance-none border border-gray-300 rounded-full px-4 py-2 pr-8 text-sm bg-white shadow-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition" onchange="updateCalendarView()">
+                    <option value="month">Mois</option>
+                    <option value="3days">3 jours</option>
+                    <option value="day">Jour</option>
+                </select>
+                <svg class="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <button id="calendarNextBtn" class="hidden sm:flex items-center justify-center w-9 h-9 bg-white border border-gray-300 shadow-sm text-gray-600 rounded-full hover:bg-blue-100 hover:text-blue-600 transition" onclick="calendarNext()" type="button" aria-label="Jour suivant">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
             <button data-modal-target="modalCreateTask" data-modal-toggle="modalCreateTask" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -39,30 +53,31 @@
         });
     @endphp
 
-    <div class="grid grid-cols-7 gap-2 text-center text-gray-600 font-medium mb-2">
-        @foreach(['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as $dayName)
-            <div>{{ $dayName }}</div>
-        @endforeach
-    </div>
-
-    <div class="grid grid-cols-7 gap-4">
-        @foreach($days as $day)
-            <div class="border rounded-lg p-2 h-40 flex flex-col {{ $day->isToday() ? 'bg-blue-50 border-blue-400' : 'bg-white' }} group relative">
-                <div class="text-sm font-semibold mb-1 text-gray-800">
-                    {{ $day->day }}
+    <div id="calendarGrid">
+        <div class="grid grid-cols-7 gap-2 text-center text-gray-600 font-medium mb-2" id="calendarHeader">
+            @foreach(['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as $dayName)
+                <div>{{ $dayName }}</div>
+            @endforeach
+        </div>
+        <div class="grid grid-cols-7 gap-4" id="calendarDays">
+            @foreach($days as $day)
+                <div class="border rounded-lg p-2 h-40 flex flex-col {{ $day->isToday() ? 'bg-blue-50 border-blue-400' : 'bg-white' }} group relative calendar-day" data-date="{{ $day->format('Y-m-d') }}" onclick="selectCalendarDay(this)">
+                    <div class="text-sm font-semibold mb-1 text-gray-800">
+                        {{ $day->day }}
+                    </div>
+                    <button class="absolute top-2 right-2 bg-blue-100 text-blue-600 rounded-full p-1 text-xs hover:bg-blue-200 transition" onclick="event.stopPropagation();openCreateTaskModalForDate('{{ $day->format('Y-m-d') }}')" title="Créer une tâche pour ce jour">+</button>
+                    <button class="absolute bottom-2 right-2 bg-blue-200 text-blue-800 rounded-full p-1 text-xs hover:bg-blue-300 transition" onclick="event.stopPropagation();openCreateColumnModal()" title="Créer une colonne">≡</button>
+                    <div class="space-y-1 overflow-auto text-left mt-5">
+                        @foreach($tasksByDate[$day->format('Y-m-d')] ?? [] as $task)
+                            <div data-modal-target="modalEditTask{{ $task->id }}" data-modal-toggle="modalEditTask{{ $task->id }}" class="text-xs bg-gray-100 p-1 rounded border-l-4 {{ $task->priority?->name === 'Urgente' ? 'border-red-500' : 'border-gray-300' }} cursor-pointer hover:bg-gray-200 transition-colors">
+                                <strong>{{ $task->title }}</strong>
+                                <div class="text-gray-500 truncate">{{ $task->description }}</div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-                <button class="absolute top-2 right-2 bg-blue-100 text-blue-600 rounded-full p-1 text-xs hover:bg-blue-200 transition" onclick="openCreateTaskModalForDate('{{ $day->format('Y-m-d') }}')" title="Créer une tâche pour ce jour">+</button>
-                <button class="absolute bottom-2 right-2 bg-blue-200 text-blue-800 rounded-full p-1 text-xs hover:bg-blue-300 transition" onclick="openCreateColumnModal()" title="Créer une colonne">≡</button>
-                <div class="space-y-1 overflow-auto text-left mt-5">
-                    @foreach($tasksByDate[$day->format('Y-m-d')] ?? [] as $task)
-                        <div data-modal-target="modalEditTask{{ $task->id }}" data-modal-toggle="modalEditTask{{ $task->id }}" class="text-xs bg-gray-100 p-1 rounded border-l-4 {{ $task->priority?->name === 'Urgente' ? 'border-red-500' : 'border-gray-300' }} cursor-pointer hover:bg-gray-200 transition-colors">
-                            <strong>{{ $task->title }}</strong>
-                            <div class="text-gray-500 truncate">{{ $task->description }}</div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
     </div>
 
     <!-- Modals d'édition de tâches -->
@@ -247,4 +262,53 @@ function addInlineColumn() {
     document.getElementById('inlineColumnColor').value = '#3B82F6';
     toggleInlineColumnForm();
 }
+function updateCalendarView() {
+    const mode = document.getElementById('calendarViewMode').value;
+    const allDays = Array.from(document.querySelectorAll('#calendarDays > div'));
+    const header = document.getElementById('calendarHeader');
+    document.getElementById('calendarPrevBtn').style.display = (mode === 'month') ? 'none' : '';
+    document.getElementById('calendarNextBtn').style.display = (mode === 'month') ? 'none' : '';
+    // Sélection par défaut si rien
+    if (calendarSelectedIndex < 0) calendarSelectedIndex = 0;
+    if (mode === 'month') {
+        allDays.forEach(d => d.style.display = '');
+        header.style.display = '';
+        document.getElementById('calendarDays').className = 'grid grid-cols-7 gap-4';
+    } else if (mode === '3days') {
+        allDays.forEach((d, i) => d.style.display = (i >= calendarSelectedIndex && i < calendarSelectedIndex+3 ? '' : 'none'));
+        header.style.display = 'none';
+        document.getElementById('calendarDays').className = 'grid grid-cols-3 gap-4';
+    } else if (mode === 'day') {
+        allDays.forEach((d, i) => d.style.display = (i === calendarSelectedIndex ? '' : 'none'));
+        header.style.display = 'none';
+        document.getElementById('calendarDays').className = 'grid grid-cols-1 gap-4';
+    }
+    // Mise en surbrillance
+    allDays.forEach((d, i) => d.classList.toggle('ring-4', i === calendarSelectedIndex));
+    allDays.forEach((d, i) => d.classList.toggle('ring-blue-400', i === calendarSelectedIndex));
+}
+function calendarPrev() {
+    const mode = document.getElementById('calendarViewMode').value;
+    const allDays = Array.from(document.querySelectorAll('#calendarDays > div'));
+    if (mode === 'day' && calendarSelectedIndex > 0) calendarSelectedIndex--;
+    if (mode === '3days' && calendarSelectedIndex > 0) calendarSelectedIndex--;
+    updateCalendarView();
+}
+function calendarNext() {
+    const mode = document.getElementById('calendarViewMode').value;
+    const allDays = Array.from(document.querySelectorAll('#calendarDays > div'));
+    if (mode === 'day' && calendarSelectedIndex < allDays.length-1) calendarSelectedIndex++;
+    if (mode === '3days' && calendarSelectedIndex < allDays.length-3) calendarSelectedIndex++;
+    updateCalendarView();
+}
+function selectCalendarDay(el) {
+    const allDays = Array.from(document.querySelectorAll('#calendarDays > div'));
+    calendarSelectedIndex = allDays.indexOf(el);
+    updateCalendarView();
+}
+window.addEventListener('DOMContentLoaded', function() {
+    calendarSelectedIndex = Array.from(document.querySelectorAll('#calendarDays > div')).findIndex(d => d.classList.contains('bg-blue-50'));
+    if (calendarSelectedIndex < 0) calendarSelectedIndex = 0;
+    updateCalendarView();
+});
 </script>

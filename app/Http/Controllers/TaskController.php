@@ -52,6 +52,7 @@ class TaskController extends Controller
 
     public function delete(Task $task)
     {
+        $task->assignedUsers()->detach();
         $task->delete();
 
         return back()->with('success', 'Task deleted successfully.');

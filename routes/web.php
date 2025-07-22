@@ -38,5 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/{project}/columns', [ColumnController::class, 'store'])->name('columns.store');
     Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
     Route::get('/{project}/calendar', [TaskController::class, 'calendar'])->name('projects.calendar');
+    Route::post('/{project}/invite', [ProjectController::class, 'invite'])->name('projects.invite');
+    Route::post('/invitations/{invitation}/accept', [\App\Http\Controllers\InvitationController::class, 'accept'])->name('invitations.accept');
+    Route::post('/invitations/{invitation}/refuse', [\App\Http\Controllers\InvitationController::class, 'refuse'])->name('invitations.refuse');
 });
 

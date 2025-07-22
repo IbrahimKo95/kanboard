@@ -18,19 +18,19 @@
     <div class="text-gray-500 text-center py-12 text-lg">Aucun projet trouvé.</div>
 @else
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        @foreach ($projects as $project)
+        @foreach ($projects as $proj)
             <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition">
                 <div>
                     <h2 class="text-xl font-semibold text-blue-700 mb-2 truncate">
-                        <a href="{{ route('projects.show', $project->id) }}" class="hover:underline">
-                            {{ $project->name }}
+                        <a href="{{ route('projects.show', $proj->id) }}" class="hover:underline">
+                            {{ $proj->name }}
                         </a>
                     </h2>
-                    <p class="text-gray-600 mb-4 min-h-[2.5rem]">{{ $project->description ?: 'Aucune description' }}</p>
+                    <p class="text-gray-600 mb-4 min-h-[2.5rem]">{{ $proj->description ?: 'Aucune description' }}</p>
                 </div>
                 <div class="flex items-center justify-between text-xs text-gray-500 mt-2">
-                    <span><strong>{{ $project->tasks->count() }}</strong> tâches</span>
-                    <span><strong>{{ $project->users->count() }}</strong> membres</span>
+                    <span><strong>{{ $proj->tasks->count() }}</strong> tâches</span>
+                    <span><strong>{{ $proj->users->count() }}</strong> membres</span>
                 </div>
             </div>
         @endforeach

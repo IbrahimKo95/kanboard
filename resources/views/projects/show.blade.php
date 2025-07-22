@@ -81,5 +81,7 @@
         </div>
     </div>
 
+    {{-- Suppression du formulaire d'invitation ici, il est maintenant dans le modal global du layout --}}
+
     @include($view)
 @endsection

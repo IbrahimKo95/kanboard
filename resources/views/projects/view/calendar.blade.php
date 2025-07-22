@@ -135,6 +135,11 @@
                     </div>
 
                     <div class="text-right">
+                        <form method="post" action="{{route("tasks.delete", [$task])}}">
+                            @csrf
+                            @method('DELETE')
+                            <input type="submit" value="Supprimer" class="px-4 py-2 text-red-500 border-1 border-red-500 rounded hover:bg-red-500 hover:text-white">
+                        </form>
                         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Modifier</button>
                     </div>
                 </form>

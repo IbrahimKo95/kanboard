@@ -11,7 +11,7 @@
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800">{{ $task->title }}</h2>
 
-                <span class="text-sm px-2 py-1 rounded-full {{ 
+                <span class="text-sm px-2 py-1 rounded-full {{
                     match($task->priority?->name) {
                         'Urgente' => 'bg-red-100 text-red-600',
                         'Importante' => 'bg-orange-100 text-orange-600',
@@ -100,7 +100,7 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
 
                     <div class="mb-4">
                         <label class="block font-medium text-gray-900">Assigner à</label>
@@ -123,6 +123,11 @@
                     </div>
 
                     <div class="text-right">
+                        <form method="post" action="{{route("tasks.delete", [$task])}}">
+                            @csrf
+                            @method('DELETE')
+                            <input type="submit" value="Supprimer" class="px-4 py-2 text-red-500 border-1 border-red-500 rounded hover:bg-red-500 hover:text-white">
+                        </form>
                         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Enregistrer</button>
                     </div>
                 </form>

@@ -13,7 +13,16 @@
 
                 <div class="task-list space-y-4" data-column-id="{{ $column->id }}">
                     @forelse($column->tasks as $task)
-                        <div data-modal-target="modalEditTask{{ $task->id }}" data-modal-toggle="modalEditTask{{ $task->id }}" class="task bg-white p-4 rounded-xl border {{ !\Carbon\Carbon::parse($task->due_date)->isPast() || !isset($task->due_date) ? "border-gray-200" : "border-red-400"}} shadow-sm cursor-move" draggable="true" data-task-id="{{ $task->id }}">
+                        @php
+                            $class = 'text-white';
+
+                            if ($task->completed_at) {
+                                $class = 'text-green-500';
+                            } elseif ($task->due_date && \Carbon\Carbon::parse($task->due_date)->isPast()) {
+                                $class = 'text-red-500';
+                            }
+                        @endphp
+                        <div data-modal-target="modalEditTask{{ $task->id }}" data-modal-toggle="modalEditTask{{ $task->id }}" class="task bg-white p-4 rounded-xl border {{ $class }} shadow-sm cursor-move" draggable="true" data-task-id="{{ $task->id }}">
                         <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600 font-medium">Développement</span>
                                 @php
@@ -35,7 +44,7 @@
                             <p class="text-sm text-gray-600">{{ $task->description }}</p>
 
                             @if($task->due_date)
-                                <div class="mt-2 flex items-center text-sm {{\Carbon\Carbon::parse($task->due_date)->isPast() ? "text-red-500" : "text-gray-500"}}">
+                                <div class="mt-2 flex items-center text-sm {{\Carbon\Carbon::parse($task->due_date)->isPast() && !$task->completed_at ? "text-red-500" : "text-gray-500"}}">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M8 7V3M16 7V3M4 11h16M4 19h16M4 15h16"></path>
@@ -111,9 +120,14 @@
                                             @endforeach
                                         </div>
                                     </div>
-
+                                    <input type="hidden" name="column_id" value="{{ $column->id }}">
                                     <div class="text-right">
-                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Créer</button>
+                                        <form method="post" action="{{route("tasks.delete", [$task])}}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="submit" value="Supprimer" class="px-4 py-2 text-red-500 border-1 border-red-500 rounded hover:bg-red-500 hover:text-white">
+                                        </form>
+                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Modifier</button>
                                     </div>
                                 </form>
                             </div>

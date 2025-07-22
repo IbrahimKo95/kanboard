@@ -11,12 +11,9 @@ class Invitation extends Model
         'sender_id',
         'project_id',
         'status',
+        'email',
+        'token'
     ];
-
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
-    }
 
     public function sender()
     {
@@ -27,4 +24,9 @@ class Invitation extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
-} 
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+}

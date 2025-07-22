@@ -2,30 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ProjectInvitationMail;
 use App\Models\Invitation;
+use App\Models\Project;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class InvitationController extends Controller
 {
-    public function accept(Invitation $invitation)
+    public function send(Request $request, Project $project)
     {
-        if ($invitation->receiver_id !== Auth::id() || $invitation->status !== 0) {
-            abort(403);
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        // roles <= 3 peuvent inviter
+        if (Auth::user()->role > 3) {
+            abort(403, 'Vous n\'avez pas la permission d\'inviter des utilisateurs.');
         }
-        // Ajoute l'utilisateur au projet
-        $invitation->project->users()->attach(Auth::id(), ['role' => 'member']);
-        $invitation->status = 1; // acceptée
-        $invitation->save();
-        return back()->with('success', 'Invitation acceptée, vous faites maintenant partie du projet.');
+
+        $email = $request->email;
+        $receiver = User::where('email', $email)->first();
+
+        $invitation = Invitation::create([
+            'sender_id' => Auth::id(),
+            'receiver_id' => $receiver?->id,
+            'email' => $email,
+            'project_id' => $project->id,
+            'status' => 0,
+            'token' => Str::random(40),
+        ]);
+
+        Mail::to($email)->send(new ProjectInvitationMail($invitation));
+
+        return back()->with('success', 'Invitation envoyée avec succès.');
     }
 
-    public function refuse(Invitation $invitation)
+    public function accept($token)
     {
-        if ($invitation->receiver_id !== Auth::id() || $invitation->status !== 0) {
-            abort(403);
+        $invitation = Invitation::where('token', $token)->firstOrFail();
+
+        if (!$invitation->receiver_id && auth()->check()) {
+            $invitation->receiver_id = auth()->id();
         }
-        $invitation->status = 2; // refusée
+
+        $invitation->status = 1;
         $invitation->save();
-        return back()->with('success', 'Invitation refusée.');
+
+        $project = $invitation->project;
+        $project->users()->attach($invitation->receiver_id);
+
+        return redirect()->route('projects.show', $project)->with('success', 'Vous avez rejoint le projet.');
     }
-} 
+}

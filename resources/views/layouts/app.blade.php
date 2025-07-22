@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Route; @endphp
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -17,22 +18,23 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-        <a href="/" class="text-xl font-bold text-blue-600 hover:text-blue-800 transition flex items-center">
-            📈 Kanboard
-        </a>
+        <a href="{{route('projects.index')}}" class="text-xl font-bold text-blue-600">📈 Kanboard</a>
         <div class="text-sm text-gray-500 hidden sm:block">Projet : <span class="font-medium text-gray-700">{{ $project->name ?? '—' }}</span></div>
     </div>
     <div class="flex items-center gap-4">
-        @if(isset($project))
-        <a data-modal-target="modalInviteUser" data-modal-toggle="modalInviteUser" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center hidden sm:flex cursor-pointer">
-            Inviter des utilisateurs
-        </a>
-        <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center hidden sm:flex">
-            Nouvelle colonne
-            <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-        </a>
+        @if(Route::currentRouteName() != "projects.index" && Route::currentRouteName() != "projects.create")
+            <a href="{{ route('calendar.export', ['project' => $project->id]) }}" target="_blank" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Exporter vers calendrier
+            </a>
+            <a href="#" data-modal-target="modalInviteUser" data-modal-toggle="modalInviteUser" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Inviter des utilisateurs
+            </a>
+            <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center hidden sm:flex">
+                Nouvelle colonne
+                <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </a>
         @endif
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
         @auth
@@ -113,18 +115,20 @@
                     @endforeach
             </div>
             <hr class="border-gray-200 my-4">
-            <a href="#" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
-                </svg>
-                Equipe
-            </a>
-            <a href="#" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
-                </svg>
-                Paramètres
-            </a>
+            @if(Route::currentRouteName() != "projects.index" && Route::currentRouteName() != "projects.create")
+                <a href="{{route('projects.users', ['project' => $project->id])}}" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
+                    </svg>
+                    Equipe
+                </a>
+                <a href="#" data-modal-target="modalProjectSettings" data-modal-toggle="modalProjectSettings" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
+                    </svg>
+                    Paramètres
+                </a>
+            @endif
         </nav>
     </aside>
 @endauth
@@ -155,39 +159,63 @@ if (sidebarOverlay) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+@if(Route::currentRouteName() != "projects.index" && Route::currentRouteName() != "projects.create")
+    <div id="modalInviteUser" tabindex="-1" class="hidden fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-modal h-full bg-black bg-opacity-50">
+        <div class="relative w-full max-w-md mx-auto mt-20">
+            <div class="relative bg-white rounded-lg shadow p-6">
+                <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-gray-900" data-modal-hide="modalInviteUser">
+                    ✕
+                </button>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Inviter un utilisateur</h3>
 
-<!-- Modal de création de colonne -->
-<div id="modalCreateColumn" tabindex="-1" class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
-    <div class="relative w-full max-w-lg bg-white rounded-lg shadow p-6">
-        <button data-modal-hide="modalCreateColumn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900">
-            ✕
-        </button>
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Créer une nouvelle colonne</h3>
-        <form method="POST" action="{{ route('columns.store', ['project' => $project ?? 1]) }}">
-            @csrf
-            <div class="mb-4">
-                <label for="column_name" class="block mb-1 font-medium text-gray-900">Nom de la colonne</label>
-                <input type="text" name="name" id="column_name" class="w-full border rounded px-3 py-2" required>
-            </div>
+                <form method="POST" action="{{ route('invitations.send', $project) }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="invite_email" class="block text-sm font-medium text-gray-700">Email de l'utilisateur</label>
+                        <input type="email" name="email" id="invite_email" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
 
-            <div class="mb-4">
-                <label for="column_color" class="block mb-1 font-medium text-gray-900">Couleur</label>
-                <input type="color" name="color" id="column_color" class="w-full border rounded px-3 py-2" value="#3B82F6">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                        Envoyer l'invitation
+                    </button>
+                </form>
             </div>
-
-            <div class="mb-4">
-                <label class="flex items-center">
-                    <input type="checkbox" name="finished_column" class="mr-2">
-                    <span class="text-sm text-gray-700">Colonne de fin (tâches terminées)</span>
-                </label>
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Créer</button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <!-- MODALE DE PARAMÈTRES -->
+    <div id="modalProjectSettings" tabindex="-1" class="hidden fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-modal h-full bg-black bg-opacity-50">
+        <div class="relative w-full max-w-lg mx-auto mt-20">
+            <div class="relative bg-white rounded-lg shadow p-6">
+                <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-gray-900" data-modal-hide="modalProjectSettings">
+                    ✕
+                </button>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Modifier le projet</h3>
+
+                <form method="POST" action="{{ route('projects.update', $project) }}">
+                    @csrf
+                    @method('PATCH')
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Nom du projet</label>
+                        <input type="text" name="name" id="name" value="{{ $project->name }}" required
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea name="description" id="description" rows="4"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ $project->description }}</textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                        Enregistrer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endif
+
 
 @if(isset($project))
 <!-- Modal d'invitation utilisateur -->

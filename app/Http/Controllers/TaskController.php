@@ -68,6 +68,15 @@ class TaskController extends Controller
             'priority_id' => 'nullable|exists:priorities,id',
             'column_id' => 'required|exists:columns,id'
         ]);
+
+        // Gérer les utilisateurs assignés de manière sécurisée
+        if ($request->has('assigned_users') && is_array($request->assigned_users)) {
+            $ids = array_filter($request->assigned_users, 'is_numeric');
+        $task->assignedUsers()->sync($ids);
+        } else {
+            // Si aucun utilisateur n'est assigné, vider la relation
+            $task->assignedUsers()->sync([]);
+        }
         $assignedUsers = $request->input('assigned_users', []);
         $ids = array_filter($assignedUsers, 'is_numeric');
         $task->assignedUsers()->sync($ids);

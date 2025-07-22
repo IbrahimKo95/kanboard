@@ -53,7 +53,7 @@ class InvitationController extends Controller
         $invitation->save();
 
         $project = $invitation->project;
-        $project->users()->attach($invitation->receiver_id);
+        $project->users()->attach($invitation->receiver_id, ['role' => 3]);
 
         return redirect()->route('projects.show', $project)->with('success', 'Vous avez rejoint le projet.');
     }

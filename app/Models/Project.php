@@ -39,4 +39,9 @@ class Project extends Model
     {
         return $this->hasMany(Column::class);
     }
+
+    public function invitations()
+    {
+        return $this->hasMany(\App\Models\Invitation::class);
+    }
 }

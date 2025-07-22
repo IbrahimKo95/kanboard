@@ -10,6 +10,22 @@ use Illuminate\Support\Facades\Mail;
 
 class ProjectController extends Controller
 {
+
+    public function update(Request $request, Project $project)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+    
+        $project->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+    
+        return back()->with('success', 'Projet mis à jour avec succès.');
+    }
+
     public function index()
     {
         $projects = Project::all();

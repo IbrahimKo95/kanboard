@@ -98,12 +98,22 @@ class TaskController extends Controller
             'tasks.*.order' => 'required|numeric'
         ]);
 
+        $column = Column::findOrFail($request->column_id);
+        $isFinishedColumn = $column->finished_column;
+
         foreach ($request->tasks as $taskData) {
-            Task::where('id', $taskData['id'])->update([
-                'order' => $taskData['order'],
-                'column_id' => $request->column_id
-            ]);
+            $task = Task::find($taskData['id']);
+
+            $task->order = $taskData['order'];
+            $task->column_id = $request->column_id;
+
+            if ($isFinishedColumn && is_null($task->completed_at)) {
+                $task->completed_at = now();
+            }
+
+            $task->save();
         }
+
 
         return response()->json(['success' => true]);
     }

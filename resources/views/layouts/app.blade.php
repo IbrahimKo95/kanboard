@@ -40,47 +40,11 @@
                 </svg>
             </a>
         @endif
-        <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
+        @if(Route::currentRouteName() === 'home')
+            <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
+        @endif
         @auth
         <div class="relative flex items-center gap-2">
-            <!-- Onglet notifications -->
-            <div class="relative group">
-                <button id="notifBtn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-blue-100 focus:outline-none relative" aria-label="Notifications">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                    @php
-                        $notifCount = \App\Models\Invitation::where('receiver_id', \Illuminate\Support\Facades\Auth::id())->where('status', 0)->count();
-                    @endphp
-                    @if($notifCount > 0)
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5">{{ $notifCount }}</span>
-                    @endif
-                </button>
-                <div class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded shadow-lg py-2 z-50 hidden group-hover:block group-focus-within:block max-h-96 overflow-y-auto">
-                    <div class="px-4 py-2 font-semibold text-gray-700 border-b">Invitations</div>
-                    @php
-                        $invitations = \App\Models\Invitation::with(['project', 'sender'])->where('receiver_id', \Illuminate\Support\Facades\Auth::id())->where('status', 0)->get();
-                    @endphp
-                    @forelse($invitations as $inv)
-                        <div class="px-4 py-3 border-b flex flex-col gap-1">
-                            <div class="text-sm text-gray-800">Projet : <span class="font-semibold">{{ $inv->project->name ?? 'Projet supprimé' }}</span></div>
-                            <div class="text-xs text-gray-500">Invité par : {{ $inv->sender->fullName() ?? 'Utilisateur supprimé' }}</div>
-                            <div class="flex gap-2 mt-2">
-                                <form method="POST" action="{{ route('invitations.accept', $inv->id) }}">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700">Accepter</button>
-                                </form>
-                                <form method="POST" action="{{ route('invitations.refuse', $inv->id) }}">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 bg-gray-300 text-gray-700 rounded text-xs hover:bg-gray-400">Refuser</button>
-                                </form>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="px-4 py-6 text-center text-gray-400">Aucune invitation reçue.</div>
-                    @endforelse
-                </div>
-            </div>
             <!-- Bulle utilisateur -->
             <div class="relative group">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }} cursor-pointer" alt="Avatar utilisateur">

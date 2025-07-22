@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ProjectInvitationMail;
-use App\Models\Invitation;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -10,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -54,7 +54,10 @@ class ProjectController extends Controller
 
     public function invite(Request $request, Project $project)
 {
-    if (auth()->user()->role_id <= 3) {
+    $user = auth()->user();
+    $pivot = $user->projects()->where('project_id', $project->id)->first()?->pivot;
+    // Seuls les rôles <= 3 (owner/admin/member) peuvent inviter
+    if (!$pivot || $pivot->role > 3) {
         abort(403);
     }
 
@@ -62,15 +65,15 @@ class ProjectController extends Controller
 
     $token = Str::uuid();
 
-    Invitation::create([
-        'sender_id' => auth()->id(),
+    $invitation = Invitation::create([
+        'sender_id' => $user->id,
         'email' => $request->email,
         'project_id' => $project->id,
         'status' => 0,
         'token' => $token,
     ]);
 
-    Mail::to($request->email)->send(new ProjectInvitationMail($project, $token));
+    Mail::to($request->email)->send(new ProjectInvitationMail($invitation));
 
     return back()->with('success', 'Invitation envoyée à ' . $request->email);
 }
@@ -80,7 +83,7 @@ public function acceptInvitation($token)
     $invitation = Invitation::where('token', $token)->firstOrFail();
 
     if ($invitation->status != 0) {
-        return redirect()->route('projects.index')->with('info', 'Invitation déjà traitée.');
+        return redirect()->route('home')->with('info', 'Invitation déjà traitée.');
     }
 
     $user = auth()->user();
@@ -133,7 +136,7 @@ public function acceptInvitation($token)
             'finished_column' => true
         ]);
 
-        return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
+        return redirect()->route('home')->with('success', 'Projet créé avec succès.');
     }
 
     public function kanban(Project $project)

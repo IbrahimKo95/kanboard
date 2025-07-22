@@ -103,15 +103,27 @@
                     </div>
 
                     <div class="text-right">
-                        <form method="post" action="{{route("tasks.delete", [$task])}}">
-                            @csrf
-                            @method('DELETE')
-                            <input type="submit" value="Supprimer" class="px-4 py-2 text-red-500 border-1 border-red-500 rounded hover:bg-red-500 hover:text-white">
-                        </form>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Modifier</button>
+                        <button type="button" class="px-4 py-2 text-red-500 border border-red-500 rounded hover:bg-red-500 hover:text-white" onclick="deleteTask({{$task->id}})">
+                            Supprimer
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Modifier
+                        </button>
                     </div>
+                </form>
+                <form method="post" action="{{route('tasks.delete', [$task])}}" id="deleteForm{{$task->id}}" style="display: none;">
+                    @csrf
+                    @method('DELETE')
                 </form>
             </div>
         </div>
     @endforeach
 </div>
+
+<script>
+    function deleteTask(taskId) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+            document.getElementById('deleteForm' + taskId).submit();
+        }
+    }
+</script>

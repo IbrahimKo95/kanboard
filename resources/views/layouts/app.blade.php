@@ -31,22 +31,26 @@
             </svg>
         </a>
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
+        @auth
         <div class="relative group">
             <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }} cursor-pointer" alt="Avatar utilisateur">
                 {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
             </div>
-            <div class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg py-2 z-50 hidden group-hover:block">
-                <form method="POST" action="{{ route('logout') }}" class="block">
+            <div class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg py-2 z-50 hidden group-hover:block group-focus-within:block">
+                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mon profil</a>
+                <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Se déconnecter</button>
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
                     @csrf
-                    <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Se déconnecter</button>
                 </form>
             </div>
         </div>
+        @endauth
     </div>
 </nav>
 
 <!-- Sidebar responsive : hidden on mobile, overlay on mobile when open -->
 <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden"></div>
+@auth
 <aside id="sidebar" class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-40 p-6 border-r border-gray-200 hidden md:block transition-transform duration-200">
         <nav class="flex flex-col gap-4">
             <div>
@@ -78,6 +82,7 @@
             </a>
         </nav>
     </aside>
+@endauth
 
 <div class="flex h-[calc(100vh-5rem)]">
     <main class="w-full overflow-y-auto p-2 sm:p-6 mt-20 transition-all duration-200 md:ml-64">

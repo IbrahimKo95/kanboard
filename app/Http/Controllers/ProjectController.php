@@ -38,7 +38,7 @@ class ProjectController extends Controller
 
         $project = Project::create($validated);
 
-        return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
+        return redirect()->route('home')->with('success', 'Projet créé avec succès.');
     }
 
     public function kanban(Project $project)

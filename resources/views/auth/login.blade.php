@@ -27,8 +27,9 @@
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold transition">Se connecter</button>
         </form>
-        <div class="mt-4 text-center">
+        <div class="mt-4 text-center flex flex-col gap-2">
             <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline text-sm">Mot de passe oublié&nbsp;?</a>
+            <a href="{{ route('register') }}" class="text-gray-700 hover:underline text-sm">Créer un compte</a>
         </div>
     </div>
 </div>

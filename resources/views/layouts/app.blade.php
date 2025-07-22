@@ -31,8 +31,16 @@
             </svg>
         </a>
         <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
-        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}" alt="Avatar utilisateur">
-            {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
+        <div class="relative group">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }} cursor-pointer" alt="Avatar utilisateur">
+                {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
+            </div>
+            <div class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg py-2 z-50 hidden group-hover:block">
+                <form method="POST" action="{{ route('logout') }}" class="block">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Se déconnecter</button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>

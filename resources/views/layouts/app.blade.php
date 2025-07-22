@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Route; @endphp
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,50 +12,54 @@
 
 <nav class="fixed top-0 left-0 right-0 z-10 bg-white shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-200 h-20">
     <div class="flex items-center gap-4">
-        <span class="text-xl font-bold text-blue-600">📈 Kanboard</span>
-        @if(isset($project))
-            <div class="text-sm text-gray-500">
-                Projet : <span class="font-medium text-gray-700">{{ $project->name }}</span>
-            </div>
-        @endif
+        <!-- Hamburger menu for mobile -->
+        <button id="sidebarToggle" class="block md:hidden mr-2 text-gray-700 focus:outline-none" aria-label="Ouvrir le menu">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <a href="{{route('projects.index')}}" class="text-xl font-bold text-blue-600">📈 Kanboard</a>
+        <div class="text-sm text-gray-500 hidden sm:block">Projet : <span class="font-medium text-gray-700">{{ $project->name ?? '—' }}</span></div>
     </div>
     <div class="flex items-center gap-4">
-        {{-- <a class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
-            Inviter des utilisateurs
-        </a> --}}
-        <a href="#" data-modal-target="modalInviteUser" data-modal-toggle="modalInviteUser" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
-            Inviter des utilisateurs
-        </a>
-
-        <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center">
-            Nouvelle colonne
-            <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-        </a>
-        <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
+        @if(Route::currentRouteName() != "projects.index" && Route::currentRouteName() != "projects.create")
+            <a href="{{ route('calendar.export', ['project' => $project->id]) }}" target="_blank" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Exporter vers calendrier
+            </a>
+            <a href="#" data-modal-target="modalInviteUser" data-modal-toggle="modalInviteUser" class="border border-gray-500 text-gray-500 px-4 py-2 rounded hover:bg-gray-600 hover:text-white transition duration-200 flex items-center">
+                Inviter des utilisateurs
+            </a>
+            <a data-modal-target="modalCreateColumn" data-modal-toggle="modalCreateColumn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 flex items-center hidden sm:flex">
+                Nouvelle colonne
+                <svg class="inline-block w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </a>
+        @endif
+        <input type="text" placeholder="Rechercher..." class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500 hidden sm:block">
         <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs text-white font-bold {{ \Illuminate\Support\Facades\Auth::user()->avatar()['color'] }}" alt="Avatar utilisateur">
             {{ \Illuminate\Support\Facades\Auth::user()->avatar()['initials'] }}
         </div>
     </div>
 </nav>
 
-<div class="flex h-[calc(100vh-5rem)]">
-    <aside class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-20 p-6 border-r border-gray-200">
-        <nav class="flex flex-col gap-4">
-            <div>
-                <h2 class="text-lg font-semibold text-gray-800 mb-2">Projets</h2>
-                <ul class="space-y-2">
-                    @foreach (\Illuminate\Support\Facades\Auth::user()->projects as $proj)
-                        <li>
-                            <a href="{{route('projects.show', [$proj])}}" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
-                                </svg>
-                                {{ $proj->name }}
-                            </a>
-                        </li>
-                    @endforeach
+<!-- Sidebar responsive : hidden on mobile, overlay on mobile when open -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden"></div>
+<aside id="sidebar" class="w-64 bg-white shadow-lg h-[calc(100vh-5rem)] fixed top-20 left-0 z-40 p-6 border-r border-gray-200 hidden md:block transition-transform duration-200">
+    <nav class="flex flex-col gap-4">
+        <div>
+            <h2 class="text-lg font-semibold text-gray-800 mb-2">Projets</h2>
+            <ul class="space-y-2">
+                @foreach (\Illuminate\Support\Facades\Auth::user()->projects as $proj)
+                    <li>
+                        <a href="{{route('projects.show', [$proj])}}" class="inline-flex items-center gap-2 text-blue-600 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l2 3h10v9H3V7z" />
+                            </svg>
+                            {{ $proj->name }}
+                        </a>
+                    </li>
+                @endforeach
             </div>
             <hr class="border-gray-200 my-4">
             <a href="{{route('projects.users', ['project' => $project->id])}}" class="inline-flex items-center gap-2 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition w-full">
@@ -71,10 +76,31 @@
             </a>
         </nav>
     </aside>
-    <main class="ml-64 w-full overflow-y-auto p-6 mt-20">
+
+<div class="flex h-[calc(100vh-5rem)]">
+    <main class="w-full overflow-y-auto p-2 sm:p-6 mt-20 transition-all duration-200 md:ml-64">
         @yield('content')
     </main>
 </div>
+
+<script>
+// Sidebar responsive JS
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarToggle = document.getElementById('sidebarToggle');
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.remove('hidden');
+        sidebarOverlay.classList.remove('hidden');
+    });
+}
+if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.add('hidden');
+        sidebarOverlay.classList.add('hidden');
+    });
+}
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 <div id="modalInviteUser" tabindex="-1" class="hidden fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto inset-0 h-modal h-full bg-black bg-opacity-50">

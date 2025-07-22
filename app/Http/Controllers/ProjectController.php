@@ -18,6 +18,10 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        // Définir la vue par défaut si aucune session n'est définie
+        if (!session()->has('project_' . $project->id . '_view')) {
+            session(['project_' . $project->id . '_view' => 'kanban']);
+        }
         return view('projects.show', compact('project'));
     }
 
@@ -86,6 +90,30 @@ public function acceptInvitation($token)
 
         $project = Project::create($validated);
 
+        $project->users()->attach(auth()->id(), ['role' => 3]);
+
+        $project->columns()->create([
+            'name' => 'À faire',
+            'color' => '#006aff',
+            'finished_column' => false
+        ]);
+        $project->columns()->create([
+            'name' => 'En cours',
+            'color' => '#ff6600',
+            'finished_column' => false
+        ]);
+        $project->columns()->create([
+            'name' => 'Terminé',
+            'color' => '#ff2a00',
+            'finished_column' => true
+        ]);
+
         return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
+    }
+
+    public function kanban(Project $project)
+    {
+        session(['project_' . $project->id . '_view' => 'kanban']);
+        return view('projects.show', compact('project'));
     }
 }

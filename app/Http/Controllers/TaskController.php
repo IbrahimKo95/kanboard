@@ -84,10 +84,8 @@ class TaskController extends Controller
     // }
     public function list(Project $project)
     {
-        $tasks = $project->tasks;
-        $users = $project->users;
-        $columns = $project->columns;
-        return view('tasks.list', compact('tasks', 'project', 'users', 'columns'));
+        session(['project_' . $project->id . '_view' => 'list']);
+        return view('projects.show', compact('project'));
     }
 
 
@@ -110,4 +108,11 @@ class TaskController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function calendar(Project $project)
+    {
+        session(['project_' . $project->id . '_view' => 'calendar']);
+        return view('projects.show', compact('project'));
+    }
+
 }
+

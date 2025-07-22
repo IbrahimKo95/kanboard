@@ -12,7 +12,7 @@
                 </div>
 
                 <div class="task-list space-y-4" data-column-id="{{ $column->id }}">
-                    @foreach($column->tasks as $task)
+                    @forelse($column->tasks as $task)
                         <div data-modal-target="modalEditTask{{ $task->id }}" data-modal-toggle="modalEditTask{{ $task->id }}" class="task bg-white p-4 rounded-xl border {{ !\Carbon\Carbon::parse($task->due_date)->isPast() || !isset($task->due_date) ? "border-gray-200" : "border-red-400"}} shadow-sm cursor-move" draggable="true" data-task-id="{{ $task->id }}">
                         <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600 font-medium">Développement</span>
@@ -118,7 +118,9 @@
                                 </form>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="empty-placeholder h-10"></div>
+                    @endforelse
                 </div>
             </div>
             <div id="modalCreateTask{{$column->id}}" tabindex="-1" class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
@@ -259,6 +261,9 @@
                 }
 
                 dropIndicator.remove();
+
+                const placeholder = list.querySelector('.empty-placeholder');
+                if (placeholder) placeholder.remove();
 
                 const columnId = list.closest('[data-column-id]').dataset.columnId;
                 updateTaskOrder(list, columnId);

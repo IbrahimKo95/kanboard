@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="container mx-auto px-4 py-6 space-y-6">
 
     <h1 class="text-2xl font-bold mb-6">Liste des tâches du projet "{{ $project->name }}"</h1>
@@ -36,7 +33,7 @@
                 <div class="mt-2 flex items-center text-sm {{ \Carbon\Carbon::parse($task->due_date)->isPast() ? 'text-red-500' : 'text-gray-500' }}">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 7V3M16 7V3M4 11h16M4 19h16M4 15h16"></path>
+                            d="M8 7V3M16 7V3M4 11h16M4 19h16M4 15h16"></path>
                     </svg>
                     {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                 </div>
@@ -56,7 +53,7 @@
         </div>
 
         <div id="modalEditTask{{ $task->id }}" tabindex="-1"
-             class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
+            class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
             <div class="relative w-full max-w-lg bg-white rounded-lg shadow p-6">
                 <button data-modal-hide="modalEditTask{{ $task->id }}" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900">✕</button>
 
@@ -186,4 +183,3 @@
                 </div>
             </div>
 </div>
-@endsection

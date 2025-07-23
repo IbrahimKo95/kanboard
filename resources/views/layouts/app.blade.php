@@ -184,32 +184,6 @@ if (sidebarOverlay) {
     </div>
 @endif
 
-
-@if(isset($project))
-<!-- Modal d'invitation utilisateur -->
-<div id="modalInviteUser" tabindex="-1" class="hidden fixed inset-0 bg-black/30 z-50 flex justify-center items-center">
-    <div class="relative w-full max-w-lg bg-white rounded-lg shadow p-6">
-        <button data-modal-hide="modalInviteUser" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900">✕</button>
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Inviter un utilisateur</h3>
-        @if(session('success'))
-            <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-2 border border-green-200 text-center">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if($errors->has('email'))
-            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-2 border border-red-200 text-center">
-                {{ $errors->first('email') }}
-            </div>
-        @endif
-        <form method="POST" action="{{ route('projects.invite', optional($project)?->id) }}" class="flex gap-2">
-            @csrf
-            <input type="email" name="email" placeholder="Email de l'utilisateur" required class="flex-1 border border-gray-300 rounded px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Inviter</button>
-        </form>
-    </div>
-</div>
-@endif
-
 </body>
 
 

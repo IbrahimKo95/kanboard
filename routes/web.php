@@ -45,8 +45,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
     Route::get('/{project}/calendar', [TaskController::class, 'calendar'])->name('projects.calendar');
     Route::get('/calendar/{project}.ics', [CalendarExportController::class, 'export'])->name('calendar.export');
-    Route::match(['get', 'post'], '/invitations/{invitation}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
-    Route::post('/invitations/{invitation}/refuse', [InvitationController::class, 'refuse'])->name('invitations.refuse');
+    Route::get('/invitations/accept/{token}', [InvitationController::class, 'accept'])->name('invitations.accept');    
+    // Route::post('/invitations/{invitation}/refuse', [InvitationController::class, 'refuse'])->name('invitations.refuse');
 });
 
 
